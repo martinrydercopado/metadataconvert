@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Message Channel to pass usage data</description>
+    <isExposed>true</isExposed>
+    <lightningMessageFields>
+        <description>Usage data as a json object</description>
+        <fieldName>usage</fieldName>
+    </lightningMessageFields>
+    <masterLabel>usageChannel</masterLabel>
+</LightningMessageChannel>

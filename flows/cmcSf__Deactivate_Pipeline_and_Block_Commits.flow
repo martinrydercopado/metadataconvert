@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>63.0</apiVersion>
+    <description>Deactivate Classic Pipeline and Block Commits to start MFP pipeline migration to SFP</description>
+    <environments>Default</environments>
+    <label>Deactivate Pipeline and Block Commits</label>
+    <processType>AutoLaunchedFlow</processType>
+</Flow>

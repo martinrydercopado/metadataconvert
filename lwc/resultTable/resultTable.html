@@ -1,0 +1,174 @@
+<template>
+    <div>
+        <template if:true={showTable}>
+            <div class="datatable-container">
+                <lightning-card variant="Narrow">
+                    <div class="corner slds-theme_shade slds-border_bottom slds-var-p-around_small">
+                        <lightning-layout multiple-rows="true">
+                            <lightning-layout-item size="8">
+                                <div
+                                    class="slds-col slds-media slds-media_center slds-has-flexi-truncate">
+                                    <div class="slds-media__figure">
+                                        <lightning-icon icon-name="standard:calculated_insights" size="medium"></lightning-icon>
+                                    </div>
+
+                                    <div class="slds-media__body">
+                                        <h2 class="slds-card__header-title">
+                                            <strong>Total Violations:</strong>
+                                            <lightning-badge label={dynamicTotalViolations} class="slds-theme_info slds-var-m-left_x-small"></lightning-badge>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="4">
+                                <div class="slds-grid slds-float_right">
+                                    <div class="slds-col">
+                                        <lightning-input placeholder="Search" variant="label-hidden" title="search"
+                                            value={searchValue} onchange={handleSearch}></lightning-input>
+                                    </div>
+                                </div>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </div>
+
+                    <template if:true={violationCounts}>
+                        <lightning-card class="slds-m-bottom_medium">
+                            <div class="slds-p-horizontal_medium slds-p-vertical_small">
+                                <div class="slds-m-top_x-small slds-button-group" role="group">
+                                    <template for:each={severityLevels} for:item="sev">
+                                        <lightning-button
+                                            key={sev.level}
+                                            label={sev.label}
+                                            title={sev.label}
+                                            data-severity={sev.level}
+                                            variant={sev.buttonVariant}
+                                            class={sev.buttonClass}
+                                            onclick={handleSeverityClick}>
+                                        </lightning-button>
+                                    </template>
+                                    <template if:true={hasActiveFilters}>
+                                        <lightning-button
+                                            label="Clear Filters"
+                                            variant="neutral"
+                                            onclick={handleClearFilters}
+                                            class="clear-filters-btn">
+                                        </lightning-button>
+                                    </template>
+                                </div>
+                            </div>
+                        </lightning-card>
+                    </template>
+
+                    <lightning-combobox
+                        name="groupBy"
+                        label="Group By"
+                        value={groupBy}
+                        options={groupByOptions}
+                        onchange={handleGroupByChange}>
+                    </lightning-combobox>
+
+                    <template if:true={groupedViolationsArray}>
+                        <!-- Engine/Rule Grouping -->
+                        <template if:true={isEngineGrouping}>
+                            <lightning-accordion allow-multiple-sections-open>
+                                <template for:each={groupedViolationsArray} for:item="engineGroup">
+                                    <lightning-accordion-section
+                                        key={engineGroup.key}
+                                        name={engineGroup.key}
+                                        label={engineGroup.label}>
+                                        <div class="engine-description slds-m-bottom_x-small">
+                                            {engineGroup.description}
+                                        </div>
+                                        <lightning-accordion allow-multiple-sections-open>
+                                            <template for:each={engineGroup.rules} for:item="ruleGroup">
+                                                <lightning-accordion-section
+                                                    key={ruleGroup.key}
+                                                    name={ruleGroup.key}
+                                                    label={ruleGroup.label}>
+                                                    <div>
+                                                        <strong>Severity:</strong> {ruleGroup.severityLabel} <br/>
+                                                        <strong>Tags:</strong> {ruleGroup.tagsString}
+                                                        <template if:true={ruleGroup.resource}>
+                                                            <br/>
+                                                            <a href={ruleGroup.resource} target="_blank">Rule Docs</a>
+                                                        </template>
+                                                    </div>
+                                                    <lightning-datatable
+                                                        key-field="id"
+                                                        data={ruleGroup.violations}
+                                                        columns={violationColumns}
+                                                        hide-checkbox-column>
+                                                    </lightning-datatable>
+                                                </lightning-accordion-section>
+                                            </template>
+                                        </lightning-accordion>
+                                    </lightning-accordion-section>
+                                </template>
+                            </lightning-accordion>
+                        </template>
+
+                        <!-- Filename Grouping -->
+                        <template if:true={isFilenameGrouping}>
+                            <lightning-accordion allow-multiple-sections-open>
+                                <template for:each={groupedByMetadataTypeArray} for:item="metaGroup">
+                                    <lightning-accordion-section
+                                        key={metaGroup.key}
+                                        name={metaGroup.key}
+                                        label={metaGroup.label}>
+                                        <lightning-accordion allow-multiple-sections-open>
+                                            <template for:each={metaGroup.files} for:item="fileGroup">
+                                                <lightning-accordion-section
+                                                    key={fileGroup.key}
+                                                    name={fileGroup.key}
+                                                    label={fileGroup.label}>
+                                                    <lightning-datatable
+                                                        key-field="id"
+                                                        data={fileGroup.violations}
+                                                        columns={violationColumnsForDisplay}
+                                                        hide-checkbox-column>
+                                                    </lightning-datatable>
+                                                </lightning-accordion-section>
+                                            </template>
+                                        </lightning-accordion>
+                                    </lightning-accordion-section>
+                                </template>
+                            </lightning-accordion>
+                        </template>
+
+                        <!-- Type/Filename Grouping -->
+                        <template if:true={isTypeFilenameGrouping}>
+                            <lightning-accordion allow-multiple-sections-open>
+                                <template for:each={groupedByMetadataTypeArray} for:item="metaGroup">
+                                    <lightning-accordion-section
+                                        key={metaGroup.key}
+                                        name={metaGroup.key}
+                                        label={metaGroup.label}>
+                                        <lightning-accordion allow-multiple-sections-open>
+                                            <template for:each={metaGroup.files} for:item="fileGroup">
+                                                <lightning-accordion-section
+                                                    key={fileGroup.key}
+                                                    name={fileGroup.key}
+                                                    label={fileGroup.label}>
+                                                    <lightning-datatable
+                                                        key-field="id"
+                                                        data={fileGroup.violations}
+                                                        columns={violationColumnsForDisplay}
+                                                        hide-checkbox-column>
+                                                    </lightning-datatable>
+                                                </lightning-accordion-section>
+                                            </template>
+                                        </lightning-accordion>
+                                    </lightning-accordion-section>
+                                </template>
+                            </lightning-accordion>
+                        </template>
+                    </template>
+                </lightning-card>
+            </div>
+        </template>
+        <template if:false={showTable}>
+            <p>{message}</p>
+        </template>
+    </div>
+
+</template>

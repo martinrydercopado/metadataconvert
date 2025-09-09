@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>52.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>If_Pipeline_Connection_Exists</name>
+        <label>If Pipeline Connection Exists</label>
+        <locationX>176</locationX>
+        <locationY>431</locationY>
+        <defaultConnector>
+            <targetReference>Update_Pipeline_Lookup</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Does Exist</defaultConnectorLabel>
+        <rules>
+            <name>Doesn_t_Exist</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Pipeline_Connection</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Doesn&apos;t Exist</label>
+        </rules>
+    </decisions>
+    <interviewLabel>Monitored Environment Processor {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Monitored Environment Processor</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Pipeline_Connection</name>
+        <label>Get Pipeline Connection</label>
+        <locationX>176</locationX>
+        <locationY>311</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>If_Pipeline_Connection_Exists</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>copado__Source_Environment__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Environment__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>copado__Destination_Environment__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Environment__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>copado__Deployment_Flow_Step__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_Pipeline_Lookup</name>
+        <label>Update Pipeline Lookup</label>
+        <locationX>264</locationX>
+        <locationY>551</locationY>
+        <inputAssignments>
+            <field>Pipeline__c</field>
+            <value>
+                <elementReference>Get_Pipeline_Connection.copado__Deployment_Flow__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Pipeline_Connection</targetReference>
+        </connector>
+        <object>Monitored_Environments__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

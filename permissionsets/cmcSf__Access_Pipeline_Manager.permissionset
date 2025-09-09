@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses>
+        <apexClass>cmcSf__FieldSetController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>cmcSf__GraphQLToSOQLConverter</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>cmcSf__PromotionsServiceCtrl</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>cmcSf__ScheduledJobCtrl</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>cmcSf__WireServiceCtrl</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>copado__PipelineManagerCtrl</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <description>Enables users to access and work with the Pipeline Manager for Salesforce Source Format Pipelines</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Access Pipeline Manager</label>
+    <tabSettings>
+        <tab>cmcSf__Pipeline_Manager_SFDX</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+</PermissionSet>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses>
+        <apexClass>cmcSf__UserStoryDataDevops</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <customPermissions>
+        <enabled>true</enabled>
+        <name>copado__Enable_Data_Deploy_DevOps_User</name>
+    </customPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Data Deploy DevOps Admin</label>
+</PermissionSet>

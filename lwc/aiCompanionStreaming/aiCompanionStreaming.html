@@ -1,0 +1,103 @@
+<template>
+    <template lwc:if={hasMessages}>
+        <!-- start of conversation -->
+        <div class="bubbles">
+            <template for:each={messages} for:item="message">
+            <div class="bubble" key={message.timestamp} data-role={message.role}>
+                <div class="bubble-message">
+                    <template lwc:if={message.link}>
+                        <pre class="contentToCopy"><a href={message.link} target="_blank">{message.content}</a></pre>
+                    </template>
+                    <template lwc:else>
+                        <!-- NOTE: we need data-content to ensure that when content changes, the component is re-rendered -->
+                        <!-- TODO: User messages should not be markdown -->
+                         <div class="contentToCopy" data-content={message.content}
+                            data-role={message.role} data-islast={message.islast} lwc:dom="manual"></div>
+                    </template>
+
+                    <div class="actions">
+                        <template lwc:if={message.isAssistant}>
+                            <lightning-button
+                                icon-name="utility:copy_to_clipboard"
+                                icon-position="right"
+                                label="Copy to clipboard"
+                                variant="base"
+                                class="slds-m-right_xx-small tinybutton"
+                                onclick={handleCopy}>
+                            </lightning-button>
+                        </template>
+                    </div>
+                </div>
+                <small class={message.role}>
+                    {message.sender}
+                </small>
+            </div>
+            </template>
+
+            <template if:true={functionExamples.length}>
+                <lightning-combobox
+                    name="actions"
+                    placeholder={labels.ACTION_PLACEHOLDER}
+                    options={functionExamples}
+                    onchange={handleAction}>
+                </lightning-combobox>
+            </template>
+        </div>
+    </template>
+    <!-- end of conversation -->
+
+    <template lwc:elseif={hasAvailableQuestions}>
+        <lightning-combobox
+            name="question"
+            label={labels.CHAT_SELECT_PROMPT_LABEL}
+            placeholder={labels.CHAT_SELECT_PROMPT_PLACEHOLDER}
+            value={selectedQuestion}
+            options={availableQuestions}
+            onchange={handleSelectQuestion}>
+        </lightning-combobox>
+        <!-- TODO: add scroll indicator -->
+    </template>
+
+    <p class="statusMessage">{statusMessage}</p>
+
+    <lightning-textarea
+        name="message"
+        data-id="message"
+        label={CHAT_ASK_OPENAI_LABEL_DYNAMIC}
+        placeholder={labels.CHAT_ASK_OPENAI_PLACEHOLDER}
+        disabled={isLoading}
+        value={userMessage}
+        onchange={handleUserMesssage}>
+    </lightning-textarea>
+
+    <div class="mainActions slds-p-vertical_x-small">
+        <span>
+            <a href="https://www.copado.com/company-legal-agreements" target="_blank">{labels.CHAT_OPENAI_PRIVACY_POLICY_LINK}</a>
+        </span>
+        <lightning-button
+            data-id="send"
+            class="slds-m-right_x-small"
+            disabled={isLoading}
+            label={labels.CHAT_SEND_BUTTON_LABEL}
+            variant="brand"
+            onclick={handleSubmit}>
+        </lightning-button>
+        <lightning-button
+            disabled={isLoading}
+            label={labels.CHAT_CLEAR_CONVERSATION_BUTTON_LABEL}
+            variant="brand-outline"
+            onclick={handleClear}>
+        </lightning-button>
+
+        <!-- full screen button -->
+        <template lwc:if={hideFullScreen}></template>
+        <template lwc:else>
+                <lightning-button-icon 
+                alternative-text="Open in new Tab"
+                onclick={handleOpenTab}
+                icon-name="utility:new_window" 
+                class="slds-m-left_x-small"></lightning-button-icon>
+        </template>
+
+    </div>
+</template>

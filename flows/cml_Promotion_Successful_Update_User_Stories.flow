@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Add_User_Story_to_Collection</name>
+        <label>Add User Story to Collection</label>
+        <locationX>952</locationX>
+        <locationY>959</locationY>
+        <assignmentItems>
+            <assignToReference>UserStoriesForUpdate</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>MyUserStory</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Promoted_User_Stories</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Set User Story values to object variable</description>
+        <name>Set_User_Story_Values</name>
+        <label>Set User Story Values</label>
+        <locationX>1075</locationX>
+        <locationY>863</locationY>
+        <assignmentItems>
+            <assignToReference>MyUserStory.Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Promoted_User_Stories.copado__User_Story__r.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>MyUserStory.cml_First_Time_Promoted_Prod_or_RB__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.LastModifiedDate</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_User_Story_to_Collection</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Checks to see if the User Story already has a First Promoted to Production value</description>
+        <name>Has_First_Promoted_to_Prod_Value</name>
+        <label>Has First Promoted to Prod Value</label>
+        <locationX>1136</locationX>
+        <locationY>576</locationY>
+        <defaultConnector>
+            <targetReference>Set_User_Story_Values</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Promoted_User_Stories.copado__User_Story__r.cml_First_Time_Promoted_Prod_or_RB__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Loop_Promoted_User_Stories</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>Updates the First Time Promoted to Production field on the Promotions related User Stories when a Deployment is successful</description>
+    <interviewLabel>Promotion Successful - Update User Stories {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Promotion Successful - Update User Stories</label>
+    <loops>
+        <description>Loop each Promoted User Story to access the User Story object for update</description>
+        <name>Loop_Promoted_User_Stories</name>
+        <label>Loop Promoted User Stories</label>
+        <locationX>776</locationX>
+        <locationY>503</locationY>
+        <collectionReference>Get_Related_Promoted_User_Stories</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Has_First_Promoted_to_Prod_Value</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Update_User_Stories</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Gets all Promoted User Stories related to the triggering Promotion</description>
+        <name>Get_Related_Promoted_User_Stories</name>
+        <label>Get Related Promoted User Stories</label>
+        <locationX>776</locationX>
+        <locationY>383</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Promoted_User_Stories</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>copado__Promotion__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>copado__Promoted_User_Story__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_User_Stories</name>
+        <label>Update User Stories</label>
+        <locationX>776</locationX>
+        <locationY>1175</locationY>
+        <inputReference>UserStoriesForUpdate</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>651</locationX>
+        <locationY>48</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>copado__Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>cml_Is_Destination_a_Production_Org__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>copado__Promotion__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Get_Related_Promoted_User_Stories</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Holding variable for manipulation of Single User Story (to be added to Collection)</description>
+        <name>MyUserStory</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>copado__User_Story__c</objectType>
+    </variables>
+    <variables>
+        <description>A collection of User Stories to be updated by this Flow</description>
+        <name>UserStoriesForUpdate</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>copado__User_Story__c</objectType>
+    </variables>
+</Flow>

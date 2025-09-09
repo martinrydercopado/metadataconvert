@@ -1,0 +1,44 @@
+<template>
+    <lightning-modal-body>
+        <b>
+            <i class="slds-text-body_small">
+                <lightning-formatted-date-time
+                    value={jobDateTime}
+                ></lightning-formatted-date-time>
+            </i>
+            {templateName} <a href={jobLink}>{jobName}</a> {jobStatus}
+        </b>
+        <template for:each={entries} for:item="entry">
+            <p key={entry.datetime}>
+                <i class="slds-text-body_small">
+                    <lightning-formatted-date-time
+                        value={entry.datetime}
+                        hour="2-digit"
+                        minute="2-digit"
+                        second="2-digit"
+                    ></lightning-formatted-date-time>
+                </i>
+                &nbsp;
+                <template lwc:if={entry.step}>
+                    <b>{entry.step}</b>
+                    &nbsp; - &nbsp;
+                    <a href={entry.link}>{entry.status}</a>
+
+                    <template if:true={entry.logId}>
+                        &nbsp; &nbsp;
+                        <lightning-button
+                            variant="base"
+                            onclick={navigateToPage}
+                            data-id={entry.logId}
+                            label="View Logs"
+                        ></lightning-button>
+                    </template>
+                </template>
+                <template lwc:else> ... {entry.status} </template>
+            </p>
+        </template>
+        <template lwc:if={jobError}>
+            <p class="error">{jobError}</p>
+        </template>
+    </lightning-modal-body>
+</template>

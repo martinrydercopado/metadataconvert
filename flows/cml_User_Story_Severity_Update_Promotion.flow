@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>54.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Set_Promotion_Field_Updates</name>
+        <label>Set Promotion Field Updates</label>
+        <locationX>176</locationX>
+        <locationY>335</locationY>
+        <assignmentItems>
+            <assignToReference>PromotionToUpdate.Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.cml_Found_in_Promotion__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>PromotionToUpdate.cml_Caused_Business_Disruption__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Promotion</targetReference>
+        </connector>
+    </assignments>
+    <description>When a User Story is marked as business impacting bug (P0 or P1 severity) ensure the related Promotion record is also flagged as causing business disruption</description>
+    <interviewLabel>User Story Severity - Update Promotion {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>User Story Severity - Update Promotion</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Promotion</name>
+        <label>Update Promotion</label>
+        <locationX>176</locationX>
+        <locationY>455</locationY>
+        <inputReference>PromotionToUpdate</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Set_Promotion_Field_Updates</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>(1 OR 2) AND 3</filterLogic>
+        <filters>
+            <field>cml_Severity__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>P0 - Blocker - Business Disruption</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>cml_Severity__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>P1 - Critical - No Workaround</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>cml_Found_in_Promotion__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>copado__User_Story__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>PromotionToUpdate</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>copado__Promotion__c</objectType>
+    </variables>
+</Flow>

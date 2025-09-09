@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Add_User_Story_to_Collection</name>
+        <label>Add User Story to Collection</label>
+        <locationX>440</locationX>
+        <locationY>648</locationY>
+        <assignmentItems>
+            <assignToReference>UserStoriesForUpdate</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_Bug_User_Stories</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Bug_User_Stories</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Set_User_Story_Values</name>
+        <label>Set User Story Values</label>
+        <locationX>440</locationX>
+        <locationY>528</locationY>
+        <assignmentItems>
+            <assignToReference>Loop_Bug_User_Stories.cml_First_Time_Promoted_Prod_or_RB__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.LastModifiedDate</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Add_User_Story_to_Collection</targetReference>
+        </connector>
+    </assignments>
+    <description>When a Rollback Deploymnt completes successfully ensure related Bug User Stories are timestamped accordingly so that Copado Metrics for Mean Time to Restore can be maintained.</description>
+    <interviewLabel>Rollback Deployment {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Rollback Deployment - Update User Stories</label>
+    <loops>
+        <name>Loop_Bug_User_Stories</name>
+        <label>Loop Bug User Stories</label>
+        <locationX>352</locationX>
+        <locationY>408</locationY>
+        <collectionReference>Get_Bug_User_Stories</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Set_User_Story_Values</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Update_User_Stories</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get all User Stories of Type Bug that reference the related Promotion in the Found in Promotion field. We are &quot;resolving&quot; this bug using a Rollback (instead of a fix forward).</description>
+        <name>Get_Bug_User_Stories</name>
+        <label>Get Bug User Stories</label>
+        <locationX>352</locationX>
+        <locationY>288</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Bug_User_Stories</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>cml_Found_in_Promotion__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.copado__Promotion__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>copado__User_Story__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_User_Stories</name>
+        <label>Update User Stories</label>
+        <locationX>352</locationX>
+        <locationY>864</locationY>
+        <inputReference>UserStoriesForUpdate</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>AND({!$Record.copado__Promotion__r.copado__Destination_Environment__r.cml_Is_Production_Org__c}, ISPICKVAL({!$Record.copado__Status__c}, &quot;Completed Successfully&quot;), NOT(ISBLANK({!$Record.copado__Rolled_back_Deployment__c})))</filterFormula>
+        <object>copado__Deployment__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Get_Bug_User_Stories</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>UserStoriesForUpdate</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>copado__User_Story__c</objectType>
+    </variables>
+</Flow>

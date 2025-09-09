@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>cmcSf:pipelineBuilderContainer</componentName>
+                <identifier>c_pipelineBuilderContainer</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>cmcSf:qualityGateRuleShowAuraComponent</componentName>
+                <identifier>c_qualityGateRuleShowAuraComponent</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>cmcSf:automationRuleShowAuraComponent</componentName>
+                <identifier>c_automationRuleShowAuraComponent</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>main</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>Pipeline Builder</masterLabel>
+    <template>
+        <name>flexipage:defaultAppHomeTemplate</name>
+    </template>
+    <type>AppPage</type>
+</FlexiPage>

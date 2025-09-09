@@ -1,0 +1,223 @@
+:host {
+    --sds-c-textarea-sizing-min-height: var(--textareHeight, 15rem);
+    --copado-aiblue: #E6F2F9;
+    --copado-aigrey: #EEEFF2;
+    --copado-background-code: #3A4057;
+    --background-color: white;
+}
+
+.mainActions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.bubbles {
+    display: flex;
+    flex-direction: column;
+}
+
+.user  {
+    box-sizing: border-box;
+    font-size: 80%;
+    font-style: italic;
+    opacity: 0.5;
+    text-align: right;
+}
+
+.mainActions span {
+    flex: 1;
+}
+
+a {
+    font-style: italic;
+    opacity: 0.6;
+}
+
+/* little animation when we are waiting for a response */
+.bubble:not([data-role="user"]) .bubble-message div:empty:after {
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    -webkit-animation: ellipsis steps(4,end) 900ms infinite;
+    animation: ellipsis steps(4, end) 900ms infinite;
+    content: "\2026"; /* ascii code for the ellipsis character */
+    width: 0px;
+}
+
+.bubble-message div {
+    margin: 0;
+}
+
+.bubble-message div.contentToCopy > pre {
+    margin: 1rem 0 1rem 0;
+    padding: 2.25rem 1rem 0.5rem 1rem;
+    white-space: revert;
+    overflow-x: scroll;
+    max-width: 100%;
+    font-family: var(--lwc-fontFamily);
+    border-radius: 5px;
+    background-color: var(--copado-background-code);
+    position: relative;
+}
+
+.bubble-message div.contentToCopy > pre:before {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    content: 'Code';
+    display: block;
+    padding: 0.25rem 1rem;
+    background-color: #878CA3;
+}
+
+.bubble-message div.contentToCopy > pre code {
+    color: #fff;
+}
+
+.bubble-message div.contentToCopy p code {
+    color: #fff;
+    background-color: var(--copado-background-code);
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
+}
+
+@keyframes ellipsis {
+    to {
+        width: 1.25em;
+    }
+}
+
+@-webkit-keyframes ellipsis {
+    to {
+        width: 1.25em;
+    }
+}
+
+.bubble {
+    max-width: 90%;
+}
+
+.bubble-message {
+    background-color: var(--copado-aigrey);
+    border-radius: 0.5rem;
+    border-bottom-left-radius: 0;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    display: flex;
+    margin-left: 0;
+    flex-direction: column;
+}
+
+.bubble[data-role="user"] {
+    align-self: flex-end;
+}
+
+.bubble[data-role="user"] .bubble-message {
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+    background-color: var(--copado-aiblue);
+    border-bottom-left-radius: 0.5rem;
+}
+
+.debug {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: var(--lwc-fontFamily);
+}
+
+.statusMessage {
+    text-align: center;
+}
+
+small.user, small.assistant {
+    font-style: italic;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+small.user {
+    float: right;
+    text-align: right;
+}
+
+.actions {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: right;
+    justify-content: right;
+}
+
+.tinybutton {
+    font-size: 0.7rem;
+}
+
+h1 {
+    display: block;
+    font-size: 2em;
+    -webkit-margin-before: 0.67__qem;
+    -webkit-margin-after: 0.67em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+hr {
+    display: block;
+    -webkit-margin-before: 0.5em;
+    -webkit-margin-after: 0.5em;
+    -webkit-margin-start: auto;
+    -webkit-margin-end: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+
+h2 {
+    display: block;
+    font-size: 1.5em;
+    -webkit-margin-before: 0.83__qem;
+    -webkit-margin-after: 0.83em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+h3 {
+    display: block;
+    font-size: 1.17em;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+h4 {
+    display: block;
+    -webkit-margin-before: 1.33__qem;
+    -webkit-margin-after: 1.33em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+h5 {
+    display: block;
+    font-size: .83em;
+    -webkit-margin-before: 1.67__qem;
+    -webkit-margin-after: 1.67em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+h6 {
+    display: block;
+    font-size: .67em;
+    -webkit-margin-before: 2.33__qem;
+    -webkit-margin-after: 2.33em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
